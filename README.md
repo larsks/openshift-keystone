@@ -2,7 +2,7 @@
 
 ## Creating resources
 
-Run the `create-all.sh` script to create all the resources in this project.  This will by default attempt to register a route using the hostname `keystone-dev.k-apps.osh.massopen.cloud`.  If this is already in use, you can provide an alternative name by setting the `KEYSTONE_PUBLIC_HOSTNAME` environment variable.
+Run the `create-all.sh` script to create all the resources in this project.  This will by default attempt to register a route using the hostname `flocx-keystone-dev.k-apps.osh.massopen.cloud`.  If this is already in use, you can provide an alternative name by setting the `KEYSTONE_PUBLIC_HOSTNAME` environment variable.
 
 ## Testing it out
 

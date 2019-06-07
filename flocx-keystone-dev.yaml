@@ -10,15 +10,15 @@ parameters:
     name: KEYSTONE_DB_NAME
     value: keystone
   - description: Password for keystone database user
-    from: '[A-Z0-9]{8}'
+    from: '[A-Z0-9]{20}'
     generate: expression
     name: KEYSTONE_DB_PASSWORD
   - description: Password for Keystone admin user
-    from: '[A-Z0-9]{8}'
+    from: '[A-Z0-9]{20}'
     generate: expression
     name: KEYSTONE_ADMIN_PASSWORD
   - description: Password for MariaDB root account
-    from: '[A-Z0-9]{8}'
+    from: '[A-Z0-9]{20}'
     generate: expression
     name: MYSQL_ROOT_PASSWORD
   - description: Keystone public hostname

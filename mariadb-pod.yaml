@@ -30,8 +30,8 @@ spec:
           protocol: TCP
       volumeMounts:
         - mountPath: /var/lib/mysql
-          name: vol-mariadb
+          name: mariadb-data
       restartPolicy: Always
   volumes:
-    - name: vol-mariadb
+    - name: mariadb-data
       emptyDir: {}

@@ -1,0 +1,156 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: flocx-keystone-dev
+parameters:
+  - description: Database user for keytone
+    name: KEYSTONE_DB_USER
+    value: keystone
+  - description: Name of keystone database
+    name: KEYSTONE_DB_NAME
+    value: keystone
+  - description: Password for keystone database user
+    from: '[A-Z0-9]{8}'
+    generate: expression
+    name: KEYSTONE_DB_PASSWORD
+  - description: Password for Keystone admin user
+    from: '[A-Z0-9]{8}'
+    generate: expression
+    name: KEYSTONE_ADMIN_PASSWORD
+  - description: Password for MariaDB root account
+    from: '[A-Z0-9]{8}'
+    generate: expression
+    name: MYSQL_ROOT_PASSWORD
+  - description: Keystone public hostname
+    name: KEYSTONE_PUBLIC_HOSTNAME
+    required: true
+objects:
+  - apiVersion: v1
+    kind: Pod
+    metadata:
+      name: keystone
+      labels:
+        name: keystone
+    spec:
+      containers:
+        - name: keystone
+          image: docker.io/tripleomaster/centos-binary-keystone:current-tripleo
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: ${MYSQL_ROOT_PASSWORD}
+            - name: KEYSTONE_DB_USER
+              value: ${KEYSTONE_DB_USER}
+            - name: KEYSTONE_DB_NAME
+              value: ${KEYSTONE_DB_NAME}
+            - name: KEYSTONE_DB_PASSWORD
+              value: ${KEYSTONE_DB_PASSWORD}
+            - name: KEYSTONE_ADMIN_PASSWORD
+              value: ${KEYSTONE_ADMIN_PASSWORD}
+            - name: KEYSTONE_PUBLIC_URL
+              value: https://${KEYSTONE_PUBLIC_HOSTNAME}
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/keystone
+              name: keystone-rw
+            - mountPath: /etc/keystone-ro
+              name: keystone-ro
+            - mountPath: /etc/httpd-ro
+              name: httpd-ro
+            - mountPath: /etc/httpd
+              name: httpd-rw
+            - mountPath: /etc/keystone-templates
+              name: keystone-templates
+            - mountPath: /data
+              name: data
+          command:
+            - /bin/sh
+            - /etc/keystone-templates/startup.sh
+      volumes:
+        - name: keystone-rw
+          emptyDir: {}
+        - name: keystone-ro
+          configMap:
+            name: keystone-config
+        - name: data
+          emptyDir: {}
+        - name: keystone-templates
+          configMap:
+            name: keystone-templates
+        - name: httpd-ro
+          configMap:
+            name: httpd-config
+        - name: httpd-rw
+          emptyDir: {}
+
+  - apiVersion: v1
+    kind: Pod
+    metadata:
+      name: mariadb
+      labels:
+        name: mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:10-bionic
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: ${MYSQL_ROOT_PASSWORD}
+            - name: MYSQL_USER
+              value: ${KEYSTONE_DB_USER}
+            - name: MYSQL_DATABASE
+              value: ${KEYSTONE_DB_NAME}
+            - name: MYSQL_PASSWORD
+              value: ${KEYSTONE_DB_PASSWORD}
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mariadb-data
+          restartPolicy: Always
+      volumes:
+        - name: mariadb-data
+          emptyDir: {}
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: keystone
+    spec:
+      selector:
+        name: keystone
+      ports:
+        - port: 5000
+          protocol: TCP
+          targetPort: 5000
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: mariadb
+    spec:
+      selector:
+        name: mariadb
+      ports:
+        - port: 3306
+          protocol: TCP
+          targetPort: 3306
+
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: keystone
+    spec:
+      host: ${KEYSTONE_PUBLIC_HOSTNAME}
+      to:
+        kind: Service
+        name: keystone
+        weight: 100
+      tls:
+        insecureEdgeTerminationPolicy: Allow
+        termination: edge
+      wildcardPolicy: None

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for x in httpd-config keystone-config keystone-templates keystone-vars; do
+for x in httpd-config keystone-config keystone-templates; do
 	oc delete configmap $x
 
 	if [ -d $x ]; then

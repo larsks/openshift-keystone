@@ -2,22 +2,8 @@
 
 set -e
 
-SERVICES="keystone-service.yaml mariadb-service.yaml"
-ROUTES="keystone-route.yaml"
+: ${KEYSTONE_PUBLIC_HOSTNAME:="flocx-keystone-dev.k-apps.osh.massopen.cloud"}
 CONFIGMAPS="httpd-config keystone-config keystone-templates keystone-vars"
-PODS="mariadb-pod.yaml keystone-pod.yaml"
-
-for x in $SERVICES; do
-	echo "creating service $x"
-	oc delete -f $x > /dev/null 2>&1 || :
-	oc create -f $x
-done
-
-for x in $ROUTES; do
-	echo "creating route $x"
-	oc delete -f $x > /dev/null 2>&1 || :
-	oc create -f $x
-done
 
 for x in $CONFIGMAPS; do
 	echo "creating configmap $x"
@@ -37,8 +23,5 @@ if [ -f keystone-secrets.yaml ]; then
 	oc create -f keystone-secrets.yaml
 fi
 
-for x in $PODS; do
-	echo "creating $x pod"
-	oc delete -f $x > /dev/null 2>&1 || :
-	oc create -f $x
-done
+oc delete all --all
+oc process -f flocx-keystone-dev.yaml -p KEYSTONE_PUBLIC_HOSTNAME=$KEYSTONE_PUBLIC_HOSTNAME | oc create -f-

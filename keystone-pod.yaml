@@ -13,8 +13,8 @@ spec:
       env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              name: environment
+            secretKeyRef:
+              name: keystone-secrets
               key: MYSQL_ROOT_PASSWORD
         - name: KEYSTONE_DB_USER
           value: keystone
@@ -22,13 +22,13 @@ spec:
           value: keystone
         - name: KEYSTONE_DB_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              name: environment
+            secretKeyRef:
+              name: keystone-secrets
               key: KEYSTONE_DB_PASSWORD
         - name: KEYSTONE_ADMIN_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              name: environment
+            secretKeyRef:
+              name: keystone-secrets
               key: KEYSTONE_ADMIN_PASSWORD
       ports:
         - containerPort: 5000

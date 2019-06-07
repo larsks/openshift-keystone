@@ -1,10 +1,8 @@
 # Running Keystone on OpenShift
 
-## Docker image
+## Prerequisites
 
-The keystone pods uses the keystone docker image [larsks/os-keystone][], which is generated from the content of the `keystone-image` directory.
-
-[larsks/os-keystone]: https://hub.docker.com/r/larsks/os-keystone
+You must have a project named `flocx-keystone` in OpenShift (and it must be your current project).
 
 ## Configuring passwords
 
@@ -29,3 +27,10 @@ stringData:
   KEYSTONE_ADMIN_PASSWORD: look.im.an.admin
   MYSQL_ROOT_PASSWORD: i.am.groot
 ```
+
+Place the above content in a file named `keystone-secrets.yaml`.
+
+## Creating resources
+
+Run the `create-all.sh` script to create all the resources in this project.
+

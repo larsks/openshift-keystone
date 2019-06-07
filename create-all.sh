@@ -19,3 +19,10 @@ done
 
 oc delete all --all
 oc process -f flocx-keystone-dev.yaml -p KEYSTONE_PUBLIC_HOSTNAME=$KEYSTONE_PUBLIC_HOSTNAME | oc create -f-
+
+while ! oc get -o json pod keystone | jq '.status.containerStatuses|.[].ready' | head -1 | grep -q true; do
+	echo "waiting for keystone pod"
+	sleep 1
+done
+
+oc exec keystone cat /data/clouds.yaml > clouds.yaml

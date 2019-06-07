@@ -17,11 +17,5 @@ for x in $CONFIGMAPS; do
 	fi
 done
 
-if [ -f keystone-secrets.yaml ]; then
-	echo "creating keystone-secrets"
-	oc delete secret keystone-secrets > /dev/null 2>&1 || :
-	oc create -f keystone-secrets.yaml
-fi
-
 oc delete all --all
 oc process -f flocx-keystone-dev.yaml -p KEYSTONE_PUBLIC_HOSTNAME=$KEYSTONE_PUBLIC_HOSTNAME | oc create -f-

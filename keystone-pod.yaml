@@ -30,11 +30,11 @@ spec:
             secretKeyRef:
               name: keystone-secrets
               key: KEYSTONE_ADMIN_PASSWORD
-#        - name: KEYSTONE_PUBLIC_URL
-#          valueFrom:
-#            configMapKeyRef:
-#              name: keystone-vars
-#              key: KEYSTONE_PUBLIC_URL
+        - name: KEYSTONE_PUBLIC_URL
+          valueFrom:
+            configMapKeyRef:
+              name: keystone-vars
+              key: KEYSTONE_PUBLIC_URL
       ports:
         - containerPort: 5000
           protocol: TCP

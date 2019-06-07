@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mariadb
+  labels:
+    name: mariadb
+spec:
+  containers:
+    - name: mariadb
+      image: mariadb:10-bionic
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: environment
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_USER
+          value: keystone
+        - name: MYSQL_DATABASE
+          value: keystone
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: environment
+              key: KEYSTONE_DB_PASSWORD
+      ports:
+        - containerPort: 3306
+          protocol: TCP
+      volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: vol-mariadb
+      restartPolicy: Always
+  volumes:
+    - name: vol-mariadb
+      emptyDir: {}

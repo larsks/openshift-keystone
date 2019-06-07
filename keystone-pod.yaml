@@ -1,0 +1,41 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keystone
+  labels:
+    name: keystone
+spec:
+  containers:
+    - name: keystone
+      image: larsks/os-keystone:latest
+      imagePullPolicy: Always
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: environment
+              key: MYSQL_ROOT_PASSWORD
+        - name: KEYSTONE_DB_USER
+          value: keystone
+        - name: KEYSTONE_DB_NAME
+          value: keystone
+        - name: KEYSTONE_DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: environment
+              key: KEYSTONE_DB_PASSWORD
+        - name: KEYSTONE_ADMIN_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: environment
+              key: KEYSTONE_ADMIN_PASSWORD
+      ports:
+        - containerPort: 5000
+          protocol: TCP
+      volumeMounts:
+        - mountPath: /data
+          name: vol-keystone
+  volumes:
+    - name: vol-keystone
+      emptyDir: {}

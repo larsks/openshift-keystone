@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: keystone-config
+  name: keystone-vars
   namespace: flocx-keystone
 data:
   KEYSTONE_PUBLIC_URL: https://keystone-flocx-keystone.k-apps.osh.massopen.cloud/

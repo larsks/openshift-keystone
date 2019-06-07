@@ -8,8 +8,8 @@ metadata:
 spec:
   containers:
     - name: keystone
-      image: larsks/os-keystone:latest
-      imagePullPolicy: Always
+      image: docker.io/tripleomaster/centos-binary-keystone:current-tripleo
+      imagePullPolicy: IfNotPresent
       env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -30,17 +30,43 @@ spec:
             secretKeyRef:
               name: keystone-secrets
               key: KEYSTONE_ADMIN_PASSWORD
-        - name: KEYSTONE_PUBLIC_URL
-          valueFrom:
-            configMapKeyRef:
-              name: keystone-config
-              key: KEYSTONE_PUBLIC_URL
+#        - name: KEYSTONE_PUBLIC_URL
+#          valueFrom:
+#            configMapKeyRef:
+#              name: keystone-vars
+#              key: KEYSTONE_PUBLIC_URL
       ports:
         - containerPort: 5000
           protocol: TCP
       volumeMounts:
+        - mountPath: /etc/keystone
+          name: keystone-rw
+        - mountPath: /etc/keystone-ro
+          name: keystone-ro
+        - mountPath: /etc/httpd-ro
+          name: httpd-ro
+        - mountPath: /etc/httpd
+          name: httpd-rw
+        - mountPath: /etc/keystone-templates
+          name: keystone-templates
         - mountPath: /data
-          name: vol-keystone
+          name: data
+      command:
+        - /bin/sh
+        - /etc/keystone-templates/startup.sh
   volumes:
-    - name: vol-keystone
+    - name: keystone-rw
+      emptyDir: {}
+    - name: keystone-ro
+      configMap:
+        name: keystone-config
+    - name: data
+      emptyDir: {}
+    - name: keystone-templates
+      configMap:
+        name: keystone-templates
+    - name: httpd-ro
+      configMap:
+        name: httpd-config
+    - name: httpd-rw
       emptyDir: {}

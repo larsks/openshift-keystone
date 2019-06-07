@@ -2,7 +2,7 @@
 
 set -e
 
-: ${KEYSTONE_PUBLIC_HOSTNAME:="flocx-keystone-dev.k-apps.osh.massopen.cloud"}
+: ${KEYSTONE_PUBLIC_HOSTNAME:="${USER}-keystone-dev.k-apps.osh.massopen.cloud"}
 CONFIGMAPS="httpd-config keystone-config keystone-templates keystone-vars"
 
 for x in $CONFIGMAPS; do

@@ -1,5 +1,11 @@
 # Running Keystone on OpenShift
 
+## Docker image
+
+The keystone pods uses the keystone docker image [larsks/os-keystone][], which is generated from the content of the `keystone-image` directory.
+
+[larsks/os-keystone]: https://hub.docker.com/r/larsks/os-keystone
+
 ## Configuring passwords
 
 You will need to provide the following passwords before you are able to start the mariadb and keystone pods:
@@ -9,6 +15,8 @@ You will need to provide the following passwords before you are able to start th
 - `KEYSTONE_ADMIN_PASSWORD` -- this is the password for the `admin` keystone user.
 
 You provide these passwords by create a [secret][] named `keystone-secrets`. An example might look like:
+
+[secret]: https://docs.openshift.com/container-platform/3.4/dev_guide/secrets.html
 
 ```
 apiVersion: v1

@@ -2,7 +2,7 @@
 
 ## Creating resources
 
-Run the `create-all.sh` script to create all the resources in this project.  This will by default attempt to register a route using the hostname `flocx-keystone-dev.k-apps.osh.massopen.cloud`.  If this is already in use, you can provide an alternative name by setting the `KEYSTONE_PUBLIC_HOSTNAME` environment variable.
+Run the `create-all.sh` script to create all the resources in this project.  This will by default attempt to register a route using the hostname `$USER-keystone-dev.k-apps.osh.massopen.cloud`, where `$USER` will be replaced by your local username.
 
 ## Testing it out
 
@@ -15,5 +15,15 @@ oc cp keystone:/data/clouds.yaml clouds.yaml
 Use the `openstack` client to interact with your new Keystone service:
 
 ```
-openstack --os-cloud openstack-public catalog list
+$ export OS_CLOUD=openstack-public
+$ openstack catalog list
++----------+----------+---------------------------------------------------------------+
+| Name     | Type     | Endpoints                                                     |
++----------+----------+---------------------------------------------------------------+
+| keystone | identity | RegionOne                                                     |
+|          |          |   internal: http://localhost:5000                             |
+|          |          | RegionOne                                                     |
+|          |          |   public: https://lars-keystone-dev.k-apps.osh.massopen.cloud |
+|          |          |                                                               |
++----------+----------+---------------------------------------------------------------+
 ```
